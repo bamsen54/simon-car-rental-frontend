@@ -4,6 +4,7 @@ function getAuthHeader() {
     return auth ? { "Authorization": "Basic " + auth } : {};
 }
 
+
 async function handleLogin(event) {
     event.preventDefault();
     
@@ -14,28 +15,33 @@ async function handleLogin(event) {
     const auth = btoa(username + ":" + password);
     
     try {
-        const response = await fetch(`${API_BASE}/api/v1/cars`, {
+        const response = await fetch(`${API_BASE}/api/v1/auth/login`, {
+            method: 'POST',
             headers: {
-                "Authorization": "Basic " + auth
-            }
+                'Content-Type': 'application/json',
+                'Authorization': 'Basic ' + auth
+            },
+            body: JSON.stringify({ username, password }),
+            credentials: 'include'
         });
         
-        if (response.ok) {
-            sessionStorage.setItem("auth", auth);
-            sessionStorage.setItem("user", JSON.stringify({ 
-                username: username, 
-                isAdmin: username === "admin" 
-            }));
-            
-            updateNavigation();
-            messageDiv.innerHTML = `<div class="message message-success">You are logged in!</div>`;
-            
-            window.location.hash = "#logout";
-        } else {
-            messageDiv.innerHTML = `<div class="message message-warning">Invalid username or password</div>`;
-        }
+        if (!response.ok) throw new Error('Invalid credentials');
+        
+        const user = await response.json();
+        
+        sessionStorage.setItem('auth', auth);
+        sessionStorage.setItem('user', JSON.stringify({
+            userId: user.id || user.userId,  // ← SPARA ID
+            username: user.username,
+            isAdmin: user.isAdmin
+        }));
+        
+        updateNavigation();
+        messageDiv.innerHTML = `<div class="message message-success">Welcome ${user.username}!</div>`;
+        window.location.hash = '#cars';
+        
     } catch (error) {
-        messageDiv.innerHTML = `<div class="message message-warning">Login failed</div>`;
+        messageDiv.innerHTML = `<div class="message message-warning">${error.message}</div>`;
     }
 }
 

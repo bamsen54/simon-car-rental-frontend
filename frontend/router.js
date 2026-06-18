@@ -12,6 +12,8 @@ const routes = {
             <div id="loginMessage"></div>
         </div>
     `,
+
+"#me": `<div id="me-container"><div class="spinner"></div></div>`,
     "#cars": `<div id="car-container"> </div>`,
     "#booking": `<div id="booking-container"><div class="spinner"></div></div>`,
     "#booking-receipt": `<div id="booking-receipt-container"><div class="spinner"></div></div>`,
@@ -73,6 +75,12 @@ async function router() {
                 window.location.hash = "#cars";
             }
         };
+        return;
+    }
+
+    if (hash === '#me') {
+        app.innerHTML = routes['#me'];
+        renderMe();
         return;
     }
 
