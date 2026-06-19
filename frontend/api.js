@@ -29,6 +29,19 @@ async function updateUser(id, userData) {
     return response.json();
 }
 
+
+// GET /api/v1/users
+async function fetchAllUsers() {
+    const response = await fetch(`${API_BASE}/api/v1/users`, {
+        headers: getAuthHeader(),
+        credentials: "include"
+    });
+    if (!response.ok) {
+        throw new Error("Failed to fetch users");
+    }
+    return response.json();
+}
+
 // GET /api/v1/cars
 async function fetchCars() {
     const response = await fetch(`${API_BASE}/api/v1/cars`, {
@@ -84,6 +97,31 @@ async function createBooking(carId, fromDate, toDate) {
     return true;
 }
 
+async function updateCar(carId, carData) {
+    // Hämta hela bilen först
+    const car = await fetchCarWithId(carId);
+    
+    // Uppdatera med nya data
+    const updatedCar = {
+        ...car,
+        ...carData
+    };
+    
+    const response = await fetch(`${API_BASE}/api/v1/cars/${carId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            ...getAuthHeader()
+        },
+        body: JSON.stringify(updatedCar),
+        credentials: 'include'
+    });
+    if (!response.ok) {
+        throw new Error("Failed to update car");
+    }
+    return response.json();
+}
+
 async function returnCar(bookingId) {
     const response = await fetch(`${API_BASE}/api/v1/bookings/return/${bookingId}`, {
         method: 'PUT',
@@ -134,6 +172,8 @@ async function fetchMyBookings() {
     }
 }
 
+
+// GET /api/v1/bookings
 async function fetchAllBookings() {
     const response = await fetch(`${API_BASE}/api/v1/bookings`, {
         headers: getAuthHeader(),
@@ -141,4 +181,67 @@ async function fetchAllBookings() {
     });
     if (!response.ok) throw new Error("Failed to fetch all bookings");
     return response.json();
+}
+
+
+
+async function updateBooking(bookingId, bookingData) {
+    const oldBooking = await fetchBookingWithId(bookingId);
+    const oldCarId = oldBooking.carId;
+    const newCarId = bookingData.carId;
+    
+    const response = await fetch(`${API_BASE}/api/v1/bookings/${bookingId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            ...getAuthHeader()
+        },
+        body: JSON.stringify({
+            carId: newCarId,
+            fromDate: bookingData.fromDate,
+            toDate: bookingData.toDate,
+            active: true
+        }),
+        credentials: 'include'
+    });
+    if (!response.ok) {
+        throw new Error("Failed to update booking");
+    }
+    
+    await updateCar(oldCarId, { booked: false });
+    await updateCar(newCarId, { booked: true });
+    
+    return response.json();
+}
+
+
+//
+async function deleteBooking(bookingId, carId) {
+    const response = await fetch(`${API_BASE}/api/v1/bookings/${bookingId}`, {
+        method: 'DELETE',
+        headers: {
+            ...getAuthHeader()
+        },
+        credentials: 'include'
+    });
+    if (!response.ok) {
+        throw new Error("Failed to delete booking");
+    }
+    
+    if (carId) {
+        const updateResponse = await fetch(`${API_BASE}/api/v1/cars/${carId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                ...getAuthHeader()
+            },
+            body: JSON.stringify({ booked: false }),
+            credentials: 'include'
+        });
+        if (!updateResponse.ok) {
+            console.error("Failed to update car status");
+        }
+    }
+    
+    return true;
 }

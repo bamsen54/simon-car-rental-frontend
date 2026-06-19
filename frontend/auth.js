@@ -38,7 +38,7 @@ async function handleLogin(event) {
         
         updateNavigation();
         messageDiv.innerHTML = `<div class="message message-success">Welcome ${user.username}!</div>`;
-        window.location.hash = '#cars';
+        window.location.hash = '#me';
         
     } catch (error) {
         messageDiv.innerHTML = `<div class="message message-warning">${error.message}</div>`;

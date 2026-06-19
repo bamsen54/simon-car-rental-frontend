@@ -20,6 +20,7 @@ const routes = {
     "#bookings": `<h2 style="color: var(--highlight);">Bookings</h2><p>Bookings page - coming soon</p>`, 
     "#admin/cars": `<h2 style="color: var(--highlight);">Admin Cars</h2><p>Admin cars page - coming soon</p>`,
     "#admin/users": `<h2 style="color: var(--highlight);">Admin Users</h2><p>Admin users page - coming soon</p>`,
+    "#admin/bookings": `<div id="admin-bookings-container"><div class="spinner"></div></div>`,
     "#logout": `
         <div class="panel-neutral" style="max-width: 400px; margin: 50px auto; text-align: center;">
             <h2 style="color: var(--highlight);">Logout</h2>
@@ -116,6 +117,13 @@ async function router() {
             app.innerHTML = '<p class="message message-warning">No car specified</p>';
         }
         
+        return;
+    }
+
+    if (hash === '#admin/bookings') {
+        console.log('Admin bookings route hit');
+        app.innerHTML = routes['#admin/bookings'];
+        renderAdminBookings();
         return;
     }
     
