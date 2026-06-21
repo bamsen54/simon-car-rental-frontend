@@ -18,8 +18,8 @@ const routes = {
     "#booking": `<div id="booking-container"><div class="spinner"></div></div>`,
     "#booking-receipt": `<div id="booking-receipt-container"><div class="spinner"></div></div>`,
     "#bookings": `<h2 style="color: var(--highlight);">Bookings</h2><p>Bookings page - coming soon</p>`, 
-    "#admin/cars": `<h2 style="color: var(--highlight);">Admin Cars</h2><p>Admin cars page - coming soon</p>`,
-    "#admin/users": `<h2 style="color: var(--highlight);">Admin Users</h2><p>Admin users page - coming soon</p>`,
+    "#admin/cars": `<div id="admin-cars-container"><div class="spinner"></div></div>`,
+    "#admin/users": `<div id="admin-users-container"><div class="spinner"></div></div>`,
     "#admin/bookings": `<div id="admin-bookings-container"><div class="spinner"></div></div>`,
     "#logout": `
         <div class="panel-neutral" style="max-width: 400px; margin: 50px auto; text-align: center;">
@@ -117,6 +117,18 @@ async function router() {
             app.innerHTML = '<p class="message message-warning">No car specified</p>';
         }
         
+        return;
+    }
+
+    if (hash === '#admin/cars') {
+        app.innerHTML = routes['#admin/cars'];
+        renderAdminCars();
+        return;
+    }
+
+    if (hash === '#admin/users') {
+        app.innerHTML = routes['#admin/users'];
+        renderAdminUsers();
         return;
     }
 

@@ -7,7 +7,7 @@ async function renderBooking(carId) {
         <h2 style="color: var(--highlight);">Booking</h2>
         <div class="panel-neutral" style="max-width: 500px; margin: 2rem auto;">
             <h3 style="text-align: center;">${car.name} ${car.model}</h3>
-            <img class="booking-car-image" src="${imagePath}" onerror="this.src='img/placeholder.jpg'">
+            <img class="booking-car-image" src="${imagePath}" onerror="this.src='img/placeholder.png'" style="object-fit: cover;">
             <form id="booking-form">
                 <label>From Date:</label>
                 <input type="date" id="from-date" value="${today}" readonly disabled>
@@ -55,7 +55,9 @@ async function renderBooking(carId) {
 
 async function renderBookingReceipt(carId, fromDate, toDate) {
     const container = document.getElementById('booking-receipt-container');
-    if (!container) return;
+    if (!container) {
+        return;
+    }
     
     try {
         const car = await fetchCarWithId(carId);
@@ -74,6 +76,6 @@ async function renderBookingReceipt(carId, fromDate, toDate) {
             window.location.hash = '#cars';
         });
     } catch (error) {
-        container.innerHTML = `<div class="message message-warning">Could not load car details</div>`;
+        container.innerHTML = '<div class="message message-warning">Could not load car details</div>';
     }
 }

@@ -68,7 +68,7 @@ async function renderCarsCardView(sortBy, sortOrder) {
         
         html += `
             <div class="panel-neutral" style="margin-bottom: 1rem; padding: 1rem; display: flex; gap: 1rem; align-items: center; max-width: 600px; margin-left: auto; margin-right: auto;">
-                <img src="${imagePath}" onerror="this.src='img/placeholder.jpg'" style="width: 80px; height: 80px; object-fit: cover;">
+                <img src="${imagePath}" onerror="this.src='img/placeholder.png'" style="width: 80px; height: 80px; object-fit: cover;">
                 <div style="flex: 1;">
                     <h3>${car.name} ${car.model}</h3>
                     <p><strong>Type:</strong> ${car.type}</p>
