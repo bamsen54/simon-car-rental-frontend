@@ -15,11 +15,13 @@ async function renderAdminUsers() {
         }
         
         let html = `
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <div style="text-align: center; margin-bottom: 2rem;">
                 <h2 style="color: var(--highlight);">Admin - All Users</h2>
-                <button id="toggle-admin-users" class="btn-function">
-                    ${adminUsersTableView ? 'Switch to Card View' : 'Switch to Table View'}
-                </button>
+                <div style="display: flex; justify-content: center; align-items: center; gap: 1rem; flex-wrap: wrap; margin-top: 1rem;">
+                    <button id="toggle-admin-users" class="btn-function">
+                        ${adminUsersTableView ? 'Switch to Card View' : 'Switch to Table View'}
+                    </button>
+                </div>
             </div>
         `;
         
@@ -178,10 +180,10 @@ function showEditUserForm(userData) {
     document.getElementById('edit-user-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        const firstName = document.getElementById('edit-first-name').value;
-        const lastName = document.getElementById('edit-last-name').value;
-        const email = document.getElementById('edit-email').value;
-        const phone = document.getElementById('edit-phone').value;
+        const firstName = document.getElementById('edit-first-name').value.trim();
+        const lastName = document.getElementById('edit-last-name').value.trim();
+        const email = document.getElementById('edit-email').value.trim();
+        const phone = document.getElementById('edit-phone').value.trim();
         const password = document.getElementById('edit-password').value;
         const confirmPassword = document.getElementById('edit-confirm-password').value;
         const role = document.getElementById('edit-role').value;

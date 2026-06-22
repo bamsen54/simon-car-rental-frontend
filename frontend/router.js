@@ -1,4 +1,5 @@
 const routes = {
+   
     "#login": `
         <div class="panel-neutral" style="max-width: 400px; margin: 50px auto;">
             <h2 style="color: var(--highlight);">Login</h2>
@@ -10,10 +11,15 @@ const routes = {
                 <button type="submit" class="btn-positive">Login</button>
             </form>
             <div id="loginMessage"></div>
+            <div style="text-align: center; margin-top: 1rem;">
+                <button id="go-to-register" class="btn-function">Create Account</button>
+            </div>
         </div>
     `,
 
-"#me": `<div id="me-container"><div class="spinner"></div></div>`,
+    "#register": `<div id="register-container"><div class="spinner"></div></div>`,
+
+    "#me": `<div id="me-container"><div class="spinner"></div></div>`,
     "#cars": `<div id="car-container"> </div>`,
     "#booking": `<div id="booking-container"><div class="spinner"></div></div>`,
     "#booking-receipt": `<div id="booking-receipt-container"><div class="spinner"></div></div>`,
@@ -36,24 +42,22 @@ let carsSortOrder = '';
 
 function updateNavigation() {
     const adminMenu = document.getElementById("adminMenu");
-    const loginLink = document.querySelector("nav a[href='#login'], nav a[href='#logout']");
+    const loginLink = document.getElementById("loginLink");
+    const meLink = document.getElementById("meLink");
+    const carsLink = document.getElementById("carsLink");
     
     if (isLoggedIn()) {
-        if (loginLink) {
-            loginLink.textContent = "Logout";
-            loginLink.href = "#logout";
-        }
-        if (adminMenu) {
-            adminMenu.style.display = isAdmin() ? "block" : "none";
-        }
+        loginLink.textContent = "Logout";
+        loginLink.href = "#logout";
+        meLink.style.display = "block";
+        carsLink.style.display = "block";
+        adminMenu.style.display = isAdmin() ? "block" : "none";
     } else {
-        if (loginLink) {
-            loginLink.textContent = "Login";
-            loginLink.href = "#login";
-        }
-        if (adminMenu) {
-            adminMenu.style.display = "none";
-        }
+        loginLink.textContent = "Login";
+        loginLink.href = "#login";
+        meLink.style.display = "none";
+        carsLink.style.display = "none";
+        adminMenu.style.display = "none";
     }
 }
 
@@ -77,6 +81,20 @@ async function router() {
             }
         };
         return;
+    }
+
+    if (hash === '#register') {
+        app.innerHTML = routes['#register'];
+        renderRegister();
+        return;
+    }
+
+    // ADMIN CHECK – ALLTID FÖRST
+    if (hash.startsWith("#admin")) {
+        if (!isAdmin()) {
+            window.location.hash = "#cars";
+            return;
+        }
     }
 
     if (hash === '#me') {
@@ -120,6 +138,7 @@ async function router() {
         return;
     }
 
+    // Admin routes
     if (hash === '#admin/cars') {
         app.innerHTML = routes['#admin/cars'];
         renderAdminCars();
@@ -133,28 +152,31 @@ async function router() {
     }
 
     if (hash === '#admin/bookings') {
-        console.log('Admin bookings route hit');
         app.innerHTML = routes['#admin/bookings'];
         renderAdminBookings();
         return;
     }
     
-    if (hash.startsWith("#admin") && !isAdmin()) {
-        window.location.hash = "#cars";
+    if (hash === '#login') {
+        app.innerHTML = routes['#login'];
+        
+        const form = app.querySelector(".login-form");
+        if (form) {
+            form.addEventListener("submit", handleLogin);
+        }
+        
+        const registerBtn = document.getElementById('go-to-register');
+        if (registerBtn) {
+            registerBtn.addEventListener('click', () => {
+                window.location.hash = '#register';
+            });
+        }
         return;
     }
     
     const html = routes[hash];
-    
     if (html) {
         app.innerHTML = html;
-        
-        if (hash === "#login") {
-            const form = app.querySelector(".login-form");
-            if (form) {
-                form.addEventListener("submit", handleLogin);
-            }
-        }
     } else {
         window.location.hash = "#login";
     }

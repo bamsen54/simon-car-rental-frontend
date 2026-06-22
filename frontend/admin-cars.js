@@ -77,9 +77,9 @@ async function renderAdminCars() {
         const sortedCars = sortAdminCars(cars, adminCarsSortBy, adminCarsSortOrder);
         
         let html = `
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <div style="text-align: center; margin-bottom: 2rem;">
                 <h2 style="color: var(--highlight);">Admin - All Cars</h2>
-                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <div style="display: flex; justify-content: center; align-items: center; gap: 1rem; flex-wrap: wrap; margin-top: 1rem;">
                     <select id="sort-admin-cars" class="input-field" style="width: auto;">
                         <option value="">No sorting</option>
                         <option value="id_asc" ${adminCarsSortBy === 'id' && adminCarsSortOrder === 'asc' ? 'selected' : ''}>ID (A-Z)</option>

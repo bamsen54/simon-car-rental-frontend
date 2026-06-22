@@ -25,11 +25,13 @@ async function renderAdminBookings() {
         }
         
         let html = `
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <div style="text-align: center; margin-bottom: 2rem;">
                 <h2 style="color: var(--highlight);">Admin - All Bookings</h2>
-                <button id="toggle-admin-bookings" class="btn-function">
-                    ${adminBookingsTableView ? 'Switch to Card View' : 'Switch to Table View'}
-                </button>
+                <div style="display: flex; justify-content: center; align-items: center; gap: 1rem; flex-wrap: wrap; margin-top: 1rem;">
+                    <button id="toggle-admin-bookings" class="btn-function">
+                        ${adminBookingsTableView ? 'Switch to Card View' : 'Switch to Table View'}
+                    </button>
+                </div>
             </div>
         `;
         

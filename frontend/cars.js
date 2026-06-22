@@ -46,9 +46,11 @@ async function renderCarsCardView(sortBy, sortOrder) {
     const sortedCars = sortCars(availableCars, sortBy, sortOrder);
     
     let html = `
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <div style="text-align: center; margin-bottom: 2rem;">
             <h2 style="color: var(--highlight);">Available Cars</h2>
-            <button id="toggle-cars-view" class="btn-function">Switch to Table View</button>
+            <div style="display: flex; justify-content: center; align-items: center; gap: 1rem; flex-wrap: wrap; margin-top: 1rem;">
+                <button id="toggle-cars-view" class="btn-function">Switch to Table View</button>
+            </div>
         </div>
         <div style="margin-bottom: 20px; text-align: center;">
             <select id="sort-cars" class="input-field" style="width: auto;">
@@ -115,9 +117,11 @@ async function renderCarsTableView(sortBy, sortOrder) {
     const sortedCars = sortCars(availableCars, sortBy, sortOrder);
     
     let html = `
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <div style="text-align: center; margin-bottom: 2rem;">
             <h2 style="color: var(--highlight);">Available Cars</h2>
-            <button id="toggle-cars-view" class="btn-function">Switch to Card View</button>
+            <div style="display: flex; justify-content: center; align-items: center; gap: 1rem; flex-wrap: wrap; margin-top: 1rem;">
+                <button id="toggle-cars-view" class="btn-function">Switch to Card View</button>
+            </div>
         </div>
         <div style="margin-bottom: 20px; text-align: center;">
             <select id="sort-cars" class="input-field" style="width: auto;">
@@ -142,7 +146,7 @@ async function renderCarsTableView(sortBy, sortOrder) {
             <tbody>
                 ${sortedCars.map(car => `
                     <tr>
-                        <td><img src="${getCarImagePath(car)}" onerror="this.src='img/placeholder.jpg'" style="width: 50px; height: 50px; object-fit: cover;"></td>
+                        <td><img src="${getCarImagePath(car)}" onerror="this.src='img/placeholder.png'" style="width: 50px; height: 50px; object-fit: cover;"></td>
                         <td>${car.name} ${car.model}</td>
                         <td>${car.type}</td>
                         <td>${car.price} SEK</td>
