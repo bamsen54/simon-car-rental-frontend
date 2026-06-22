@@ -136,12 +136,22 @@ async function renderAdminBookings() {
         document.querySelectorAll('.return-booking').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 const bookingId = e.target.dataset.id;
+                const msgDiv = document.createElement('div');
+                msgDiv.className = 'message message-warning';
+                msgDiv.textContent = 'Returning car...';
+                container.prepend(msgDiv);
+                
                 try {
                     await returnCar(bookingId);
-                    renderAdminBookings();
+                    msgDiv.className = 'message message-success';
+                    msgDiv.textContent = 'Car returned successfully!';
+                    setTimeout(() => {
+                        renderAdminBookings();
+                    }, 1500);
                 }
                 catch (error) {
-                    console.error(error.message);
+                    msgDiv.className = 'message message-warning';
+                    msgDiv.textContent = error.message;
                 }
             });
         });
@@ -150,12 +160,22 @@ async function renderAdminBookings() {
             btn.addEventListener('click', async (e) => {
                 const bookingId = e.target.dataset.id;
                 const carId = e.target.dataset.car;
+                const msgDiv = document.createElement('div');
+                msgDiv.className = 'message message-warning';
+                msgDiv.textContent = 'Deleting booking...';
+                container.prepend(msgDiv);
+                
                 try {
                     await deleteBooking(bookingId, carId);
-                    renderAdminBookings();
+                    msgDiv.className = 'message message-success';
+                    msgDiv.textContent = 'Booking deleted successfully!';
+                    setTimeout(() => {
+                        renderAdminBookings();
+                    }, 1500);
                 }
                 catch (error) {
-                    console.error(error.message);
+                    msgDiv.className = 'message message-warning';
+                    msgDiv.textContent = error.message;
                 }
             });
         });

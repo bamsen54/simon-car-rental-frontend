@@ -338,18 +338,7 @@ async function deleteBooking(bookingId, carId) {
     }
     
     if (carId) {
-        const updateResponse = await fetch(`${API_BASE}/api/v1/cars/${carId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                ...getAuthHeader()
-            },
-            body: JSON.stringify({ booked: false }),
-            credentials: 'include'
-        });
-        if (!updateResponse.ok) {
-            console.error("Failed to update car status");
-        }
+        await updateCar(carId, { booked: false });
     }
     
     return true;

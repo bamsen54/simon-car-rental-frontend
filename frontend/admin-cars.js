@@ -1,4 +1,70 @@
 let adminCarsTableView = false;
+let adminCarsSortBy = '';
+let adminCarsSortOrder = '';
+
+function sortAdminCars(cars, sortBy, sortOrder) {
+    if (sortBy === '' || sortOrder === '') {
+        return [...cars];
+    }
+    
+    const sorted = [...cars];
+    sorted.sort((a, b) => {
+        let valA, valB;
+        
+        if (sortBy === 'id') {
+            valA = a.id;
+            valB = b.id;
+        }
+        else if (sortBy === 'name') {
+            valA = a.name.toLowerCase();
+            valB = b.name.toLowerCase();
+        }
+        else if (sortBy === 'model') {
+            valA = a.model.toLowerCase();
+            valB = b.model.toLowerCase();
+        }
+        else if (sortBy === 'type') {
+            valA = a.type.toLowerCase();
+            valB = b.type.toLowerCase();
+        }
+        else if (sortBy === 'price') {
+            valA = a.price;
+            valB = b.price;
+        }
+        else if (sortBy === 'booked') {
+            valA = a.booked;
+            valB = b.booked;
+        }
+        else if (sortBy === 'features') {
+            valA = (a.feature1 || '') + (a.feature2 || '') + (a.feature3 || '');
+            valB = (b.feature1 || '') + (b.feature2 || '') + (b.feature3 || '');
+            valA = valA.toLowerCase();
+            valB = valB.toLowerCase();
+        }
+        else {
+            return 0;
+        }
+        
+        if (typeof valA === 'string') {
+            if (sortOrder === 'asc') {
+                return valA.localeCompare(valB);
+            }
+            else {
+                return valB.localeCompare(valA);
+            }
+        }
+        else {
+            if (sortOrder === 'asc') {
+                return valA - valB;
+            }
+            else {
+                return valB - valA;
+            }
+        }
+    });
+    
+    return sorted;
+}
 
 async function renderAdminCars() {
     const container = document.getElementById('admin-cars-container');
@@ -8,11 +74,29 @@ async function renderAdminCars() {
     
     try {
         const cars = await fetchCars();
+        const sortedCars = sortAdminCars(cars, adminCarsSortBy, adminCarsSortOrder);
         
         let html = `
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                 <h2 style="color: var(--highlight);">Admin - All Cars</h2>
-                <div style="display: flex; gap: 0.5rem;">
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <select id="sort-admin-cars" class="input-field" style="width: auto;">
+                        <option value="">No sorting</option>
+                        <option value="id_asc" ${adminCarsSortBy === 'id' && adminCarsSortOrder === 'asc' ? 'selected' : ''}>ID (A-Z)</option>
+                        <option value="id_desc" ${adminCarsSortBy === 'id' && adminCarsSortOrder === 'desc' ? 'selected' : ''}>ID (Z-A)</option>
+                        <option value="name_asc" ${adminCarsSortBy === 'name' && adminCarsSortOrder === 'asc' ? 'selected' : ''}>Name (A-Z)</option>
+                        <option value="name_desc" ${adminCarsSortBy === 'name' && adminCarsSortOrder === 'desc' ? 'selected' : ''}>Name (Z-A)</option>
+                        <option value="model_asc" ${adminCarsSortBy === 'model' && adminCarsSortOrder === 'asc' ? 'selected' : ''}>Model (A-Z)</option>
+                        <option value="model_desc" ${adminCarsSortBy === 'model' && adminCarsSortOrder === 'desc' ? 'selected' : ''}>Model (Z-A)</option>
+                        <option value="type_asc" ${adminCarsSortBy === 'type' && adminCarsSortOrder === 'asc' ? 'selected' : ''}>Type (A-Z)</option>
+                        <option value="type_desc" ${adminCarsSortBy === 'type' && adminCarsSortOrder === 'desc' ? 'selected' : ''}>Type (Z-A)</option>
+                        <option value="price_asc" ${adminCarsSortBy === 'price' && adminCarsSortOrder === 'asc' ? 'selected' : ''}>Price (Low-High)</option>
+                        <option value="price_desc" ${adminCarsSortBy === 'price' && adminCarsSortOrder === 'desc' ? 'selected' : ''}>Price (High-Low)</option>
+                        <option value="booked_asc" ${adminCarsSortBy === 'booked' && adminCarsSortOrder === 'asc' ? 'selected' : ''}>Booked (No-Yes)</option>
+                        <option value="booked_desc" ${adminCarsSortBy === 'booked' && adminCarsSortOrder === 'desc' ? 'selected' : ''}>Booked (Yes-No)</option>
+                        <option value="features_asc" ${adminCarsSortBy === 'features' && adminCarsSortOrder === 'asc' ? 'selected' : ''}>Features (A-Z)</option>
+                        <option value="features_desc" ${adminCarsSortBy === 'features' && adminCarsSortOrder === 'desc' ? 'selected' : ''}>Features (Z-A)</option>
+                    </select>
                     <button id="show-add-car" class="btn-positive">Add Car</button>
                     <button id="toggle-admin-cars" class="btn-function">
                         ${adminCarsTableView ? 'Switch to Card View' : 'Switch to Table View'}
@@ -57,7 +141,7 @@ async function renderAdminCars() {
             </div>
         `;
         
-        if (cars.length === 0) {
+        if (sortedCars.length === 0) {
             html += '<div class="panel-neutral" style="max-width: 600px; margin: 2rem auto; text-align: center; color: var(--text-gray);">No cars found.</div>';
         }
         else {
@@ -78,7 +162,7 @@ async function renderAdminCars() {
                             </tr>
                         </thead>
                         <tbody>
-                            ${cars.map(car => {
+                            ${sortedCars.map(car => {
                                 const imagePath = getCarImagePath(car);
                                 return `
                                     <tr>
@@ -103,7 +187,7 @@ async function renderAdminCars() {
             }
             else {
                 html += `<div id="admin-cars-list">`;
-                for (const car of cars) {
+                for (const car of sortedCars) {
                     const imagePath = getCarImagePath(car);
                     
                     html += `
@@ -129,6 +213,20 @@ async function renderAdminCars() {
         }
         
         container.innerHTML = html;
+        
+        document.getElementById('sort-admin-cars').addEventListener('change', (e) => {
+            const value = e.target.value;
+            if (value === '') {
+                adminCarsSortBy = '';
+                adminCarsSortOrder = '';
+            }
+            else {
+                const [sortBy, sortOrder] = value.split('_');
+                adminCarsSortBy = sortBy;
+                adminCarsSortOrder = sortOrder;
+            }
+            renderAdminCars();
+        });
         
         document.getElementById('toggle-admin-cars').addEventListener('click', () => {
             adminCarsTableView = !adminCarsTableView;
