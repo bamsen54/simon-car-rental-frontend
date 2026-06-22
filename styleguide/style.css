@@ -2,6 +2,7 @@
     --bg-darkest: #0a0a0a;
     --text-light: #e0e0e0;
     --text-gray: #a0a0a0;
+    --text-dark: #0b0b0b;
     --highlight: #d66545;
     --warning: #e74c3c;
     --positive: #27ae60;
@@ -21,7 +22,6 @@ main {
     margin-top: 0;
     padding-top: 20px;
 }
-
 
 section {
     margin-bottom: 8rem;
@@ -49,7 +49,6 @@ nav a {
     color: var(--text-light);
     text-decoration: none;
 }
-
 
 .section-heading {
     color: var(--highlight);
@@ -86,8 +85,6 @@ nav a {
     color: var(--text-light);
 }
 
-
-
 .color-flex {
     display: flex;
     flex-wrap: wrap;
@@ -102,7 +99,7 @@ nav a {
 
 .color-box {
     width: 150px;
-    padding: 20px 10px 20px 10px;
+    padding: 20px 10px;
     border-radius: 8px;
     color: white;
     text-align: center;
@@ -119,8 +116,6 @@ nav a {
     font-size: 11px;
     opacity: 0.8;
 }
-
-
 
 #buttons-panel {
     padding-top: 1rem;
@@ -145,8 +140,8 @@ button {
 
 .btn-function {
     background-color: transparent;
-    color: #9b6b5d ;
-    border: 1px solid #9b6b5d ;
+    color: #9b6b5d;
+    border: 1px solid #9b6b5d;
     border-radius: 20px;
 }
 
@@ -160,21 +155,40 @@ button {
     color: white;
 }
 
-
-
-
 #tables-container {
     color: var(--text-light);
     margin: 0 auto;
     width: fit-content;
 }
 
-#table-smal, #table-wide {
+#table-smal {
     margin-left: auto;
     margin-right: auto;
 }
 
+.cars-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: var(--neutral);
+    border-radius: 12px;
+    overflow: hidden;
+}
 
+.cars-table th,
+.cars-table td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--bg-darkest);
+}
+
+.cars-table th {
+    background-color: var(--highlight);
+    color: white;
+}
+
+.cars-table tr:hover td {
+    background-color: var(--bg-darkest);
+}
 
 .message {
     padding: 12px 20px;
@@ -199,13 +213,11 @@ button {
     100% { opacity: 0; visibility: hidden; }
 }
 
-
-
 .spinner {
     width: 50px;
     height: 50px;
     border: 4px solid var(--text-gray);
-    border-top: 4px solid var(--highlight); 
+    border-top: 4px solid var(--highlight);
     animation: spin 1s linear infinite;
     margin: 20px auto;
     border-radius: 50%;
@@ -215,8 +227,6 @@ button {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
-
-
 
 #panel-container {
     display: flex;
@@ -234,7 +244,6 @@ button {
     border-radius: 12px;
 }
 
-
 .panel-positive {
     background-color: var(--positive);
     color: var(--text-light);
@@ -248,7 +257,6 @@ button {
     padding: 20px;
     border-radius: 12px;
 }
-
 
 #demo-form {
     max-width: 400px;
@@ -269,6 +277,28 @@ button {
     border-radius: 4px;
     border: 1px solid var(--text-gray);
     background-color: var(--bg-dark);
+    color: var(--text-dark);
+    box-sizing: border-box;
+}
+
+.select-field {
+    width: 100%;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid var(--text-gray);
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+    box-sizing: border-box;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23a0a0a0' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    cursor: pointer;
+}
+
+.select-field option {
+    background-color: var(--bg-darkest);
     color: var(--text-light);
 }
 
@@ -281,11 +311,9 @@ button {
     margin-top: 1rem;
 }
 
-
 #preferred-contact-span {
     color: var(--text-light);
 }
-
 
 #submit-form {
     display: block;

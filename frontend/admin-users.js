@@ -1,19 +1,18 @@
+// admin-users.js
 let adminUsersTableView = false;
 
 async function renderAdminUsers() {
     const container = document.getElementById('admin-users-container');
-    if (!container) {
-        return;
-    }
-    
+    if (!container) return;
+
     try {
         const users = await fetchAllUsers();
-        
+
         if (users.length === 0) {
             container.innerHTML = '<div class="panel-neutral" style="max-width: 600px; margin: 2rem auto; text-align: center; color: var(--text-gray);">No users found.</div>';
             return;
         }
-        
+
         let html = `
             <div style="text-align: center; margin-bottom: 2rem;">
                 <h2 style="color: var(--highlight);">Admin - All Users</h2>
@@ -24,7 +23,7 @@ async function renderAdminUsers() {
                 </div>
             </div>
         `;
-        
+
         if (adminUsersTableView) {
             html += `
                 <table class="cars-table">
@@ -64,12 +63,10 @@ async function renderAdminUsers() {
                     </tbody>
                 </table>
             `;
-        }
-        else {
+        } else {
             html += `<div id="admin-users-list">`;
             for (const user of users) {
                 const isAdmin = user.role === 'ROLE_ADMIN';
-                
                 html += `
                     <div class="panel-neutral" style="margin-bottom: 1rem; padding: 1rem; display: flex; gap: 1rem; align-items: center; max-width: 700px; margin-left: auto; margin-right: auto; border-left: 4px solid ${isAdmin ? 'var(--highlight)' : 'var(--text-gray)'};">
                         <div style="flex: 1;">
@@ -89,14 +86,14 @@ async function renderAdminUsers() {
             }
             html += `</div>`;
         }
-        
+
         container.innerHTML = html;
-        
+
         document.getElementById('toggle-admin-users').addEventListener('click', () => {
             adminUsersTableView = !adminUsersTableView;
             renderAdminUsers();
         });
-        
+
         document.querySelectorAll('.edit-user').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const userData = {
@@ -111,75 +108,79 @@ async function renderAdminUsers() {
                 showEditUserForm(userData);
             });
         });
-        
+
         document.querySelectorAll('.delete-user').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 const userId = e.target.dataset.id;
+                const msgDiv = document.createElement('div');
+                msgDiv.className = 'message message-warning';
+                msgDiv.textContent = 'Deleting user...';
+                container.prepend(msgDiv);
+
                 try {
                     await deleteUser(userId);
-                    renderAdminUsers();
-                }
-                catch (error) {
-                    console.error(error.message);
+                    msgDiv.className = 'message message-success';
+                    msgDiv.textContent = 'User deleted successfully!';
+                    setTimeout(() => renderAdminUsers(), 1500);
+                } catch (error) {
+                    msgDiv.className = 'message message-warning';
+                    msgDiv.textContent = error.message;
                 }
             });
         });
-    }
-    catch (error) {
+    } catch (error) {
         container.innerHTML = `<div class="panel-neutral" style="max-width: 600px; margin: 2rem auto; text-align: center; color: var(--highlight);">${error.message}</div>`;
     }
 }
 
 function showEditUserForm(userData) {
     const container = document.getElementById('admin-users-container');
-    if (!container) {
-        return;
-    }
-    
+    if (!container) return;
+
     const formHtml = `
         <form class="demo-form" id="edit-user-form">
             <h2 class="section-heading">Edit User</h2>
-            
+
             <label>Username (cannot be changed)</label>
             <input type="text" class="input-field" value="${userData.username}" disabled style="opacity: 0.6;">
-            
+
             <label>First Name</label>
             <input type="text" id="edit-first-name" class="input-field" value="${userData.firstName}">
-            
+
             <label>Last Name</label>
             <input type="text" id="edit-last-name" class="input-field" value="${userData.lastName}">
-            
+
             <label>Email</label>
             <input type="email" id="edit-email" class="input-field" value="${userData.email}">
-            
+
             <label>Phone</label>
             <input type="tel" id="edit-phone" class="input-field" value="${userData.phone}">
-            
+
             <label>New Password</label>
             <input type="password" id="edit-password" class="input-field" placeholder="Enter new password">
-            
+
             <label>Confirm Password</label>
             <input type="password" id="edit-confirm-password" class="input-field" placeholder="Confirm new password">
-            
+
             <label>Role</label>
             <select id="edit-role" class="select-field">
                 <option value="user" ${userData.role === 'user' ? 'selected' : ''}>User</option>
                 <option value="admin" ${userData.role === 'admin' ? 'selected' : ''}>Admin</option>
             </select>
-            
+
             <div class="btn-row">
                 <button type="submit" class="btn-positive">Save</button>
                 <button type="button" id="cancel-edit-user" class="btn-negative">Cancel</button>
             </div>
         </form>
-        <div id="edit-user-message" style="display: block; max-width: 400px; margin: 1rem auto; text-align: center;"></div>
+        <div id="edit-user-message" style="max-width: 400px; margin: 1rem auto; text-align: center;"></div>
     `;
-    
+
     container.innerHTML = formHtml;
-    
+
     document.getElementById('edit-user-form').addEventListener('submit', async (e) => {
         e.preventDefault();
-        
+
         const firstName = document.getElementById('edit-first-name').value.trim();
         const lastName = document.getElementById('edit-last-name').value.trim();
         const email = document.getElementById('edit-email').value.trim();
@@ -188,14 +189,14 @@ function showEditUserForm(userData) {
         const confirmPassword = document.getElementById('edit-confirm-password').value;
         const role = document.getElementById('edit-role').value;
         const msgDiv = document.getElementById('edit-user-message');
-        
+
         if (password && password !== confirmPassword) {
             msgDiv.innerHTML = '<div class="message message-warning">Passwords do not match</div>';
             return;
         }
-        
+
         msgDiv.innerHTML = '<div class="spinner"></div>';
-        
+
         const updateData = {
             username: userData.username,
             firstName: firstName,
@@ -204,15 +205,14 @@ function showEditUserForm(userData) {
             phone: phone,
             role: role === 'admin' ? 'ROLE_ADMIN' : 'ROLE_USER'
         };
-        
         if (password) {
             updateData.password = password;
         }
-        
+
         try {
             await updateUser(userData.id, updateData);
             msgDiv.innerHTML = '<div class="message message-success">User updated successfully!</div>';
-            
+
             const currentUser = JSON.parse(sessionStorage.getItem('user'));
             if (userData.id == currentUser.userId) {
                 currentUser.role = role === 'admin' ? 'ROLE_ADMIN' : 'ROLE_USER';
@@ -220,16 +220,13 @@ function showEditUserForm(userData) {
                 sessionStorage.setItem('user', JSON.stringify(currentUser));
                 updateNavigation();
             }
-            
-            setTimeout(() => {
-                renderAdminUsers();
-            }, 1000);
-        }
-        catch (error) {
+
+            setTimeout(() => renderAdminUsers(), 1000);
+        } catch (error) {
             msgDiv.innerHTML = `<div class="message message-warning">${error.message}</div>`;
         }
     });
-    
+
     document.getElementById('cancel-edit-user').addEventListener('click', () => {
         renderAdminUsers();
     });

@@ -68,35 +68,21 @@ async function renderRegister() {
         msgDiv.innerHTML = '<div class="spinner"></div>';
         
         try {
-            const response = await fetch(`${API_BASE}/api/v1/users`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    ...getAuthHeader()
-                },
-                body: JSON.stringify({
-                    username,
-                    password,
-                    firstName,
-                    lastName,
-                    email,
-                    phone,
-                    role: 'ROLE_USER'
-                }),
-                credentials: 'include'
+            await registerUser({
+                username,
+                password,
+                firstName,
+                lastName,
+                email,
+                phone,
+                role: 'ROLE_USER'
             });
-            
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.error || 'Registration failed');
-            }
             
             msgDiv.innerHTML = '<div class="message message-success">Account created! You can now log in.</div>';
             setTimeout(() => {
                 window.location.hash = '#login';
             }, 1500);
-        }
-        catch (error) {
+        } catch (error) {
             msgDiv.innerHTML = `<div class="message message-warning">${error.message}</div>`;
         }
     });

@@ -6,28 +6,14 @@ function getAuthHeader() {
 async function handleLogin(event) {
     event.preventDefault();
     
-    const username = document.getElementById("username").value;
+    const username = document.getElementById("username").value.trim();
     const password = document.getElementById("password").value;
     const messageDiv = document.getElementById("loginMessage");
     
     const auth = btoa(username + ":" + password);
     
     try {
-        const response = await fetch(`http://localhost:8080/api/v1/auth/login`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Basic ' + auth
-            },
-            body: JSON.stringify({ username, password }),
-            credentials: 'include'
-        });
-        
-        if (!response.ok) {
-            throw new Error('Invalid credentials');
-        }
-        
-        const user = await response.json();
+        const user = await login(username, password, auth);
         
         sessionStorage.setItem('auth', auth);
         sessionStorage.setItem('user', JSON.stringify({
@@ -65,6 +51,8 @@ function updateNavigation() {
     const adminMenu = document.getElementById("adminMenu");
     const loginLink = document.querySelector("nav a[href='#login'], nav a[href='#logout']");
     const carsLink = document.querySelector("nav a[href='#cars']");
+    const meLink = document.querySelector("nav a[href='#me']");
+    const bookingsLink = document.querySelector("nav a[href='#bookings']");
     
     if (isLoggedIn()) {
         if (loginLink) {
@@ -77,6 +65,12 @@ function updateNavigation() {
         if (carsLink) {
             carsLink.style.display = isAdmin() ? "none" : "block";
         }
+        if (meLink) {
+            meLink.style.display = "block";
+        }
+        if (bookingsLink) {
+            bookingsLink.style.display = "block";
+        }
     } else {
         if (loginLink) {
             loginLink.textContent = "Login";
@@ -86,7 +80,13 @@ function updateNavigation() {
             adminMenu.style.display = "none";
         }
         if (carsLink) {
-            carsLink.style.display = "block";
+            carsLink.style.display = "none";
+        }
+        if (meLink) {
+            meLink.style.display = "none";
+        }
+        if (bookingsLink) {
+            bookingsLink.style.display = "none";
         }
     }
 }

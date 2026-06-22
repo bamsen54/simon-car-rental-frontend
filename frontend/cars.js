@@ -1,7 +1,11 @@
+// cars.js
+
 let tableView = false;
 
 function sortCars(cars, sortBy, sortOrder) {
-    if (sortBy === '' || sortOrder === '') return [...cars];
+    if (sortBy === '' || sortOrder === '') {
+        return [...cars];
+    }
     
     const sorted = [...cars];
     sorted.sort((a, b) => {
