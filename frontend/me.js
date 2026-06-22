@@ -125,17 +125,36 @@ async function renderMe() {
 
             try {
                 await updateUser(user.id, updateData);
+                
+                const storedUser = JSON.parse(sessionStorage.getItem('user'));
+                storedUser.firstName = firstName;
+                storedUser.lastName = lastName;
+                storedUser.email = email;
+                storedUser.phone = phone;
+                
+                if (newPassword) {
+                    const auth = btoa(user.username + ':' + newPassword);
+                    sessionStorage.setItem('auth', auth);
+                }
+                
+                sessionStorage.setItem('user', JSON.stringify(storedUser));
+                
                 msgDiv.innerHTML = '<div class="message message-success">Profile updated successfully!</div>';
+                
+                updateNavigation();
                 renderMe();
 
-            } 
-            
-            catch (error) {
+            } catch (error) {
                 msgDiv.innerHTML = `<div class="message message-warning">${error.message}</div>`;
             }
         });
 
     } catch (error) {
         console.log(error.message);
+        container.innerHTML = `
+            <div class="panel-neutral" style="max-width: 600px; margin: 2rem auto; text-align: center; color: var(--highlight);">
+                Failed to load profile: ${error.message}
+            </div>
+        `;
     }
 }

@@ -200,8 +200,9 @@ async function addCar(carData) {
 }
 
 // ADMIN PUT /api/v1/cars/{carId}
+// ADMIN PUT /api/v1/cars/{carId}
 async function updateCar(carId, carData) {
-    const car = await fetchCarWithId(carId);
+    console.log('updateCar anropad med:', { carId, carData });
     
     const response = await fetch(`${API_BASE}/api/v1/cars/${carId}`, {
         method: 'PUT',
@@ -211,25 +212,70 @@ async function updateCar(carId, carData) {
         },
         body: JSON.stringify({
             id: carId,
-            name: car.name,
-            model: car.model,
-            type: car.type,
-            price: car.price,
-            feature1: car.feature1 || '',
-            feature2: car.feature2 || '',
-            feature3: car.feature3 || '',
-            booked: carData.booked !== undefined ? carData.booked : car.booked,
-            image: null
+            name: carData.name,
+            model: carData.model,
+            type: carData.type,
+            price: carData.price,
+            feature1: carData.feature1 || '',
+            feature2: carData.feature2 || '',
+            feature3: carData.feature3 || '',
+            booked: carData.booked !== undefined ? carData.booked : false
         }),
         credentials: 'include'
     });
+    
     if (!response.ok) {
         const error = await response.json();
         throw new Error(error.error || 'Failed to update car');
     }
-    return response.json();
+    
+    const updatedCar = await response.json();
+    
+    // Uppdatera carMap globalt
+    if (typeof carMap !== 'undefined') {
+        carMap[carId] = updatedCar;
+    }
+    
+    return updatedCar;
 }
 
+// ADMIN GET /api/v1/bookings/return/{bookingId}
+async function returnCar(bookingId) {
+    const booking = await fetchBookingWithId(bookingId);
+    const carId = booking.carId;
+    
+    // Hämta bilens data först
+    const car = await fetchCarWithId(carId);
+    
+    const response = await fetch(`${API_BASE}/api/v1/bookings/return/${bookingId}`, {
+        method: 'PUT',
+        headers: {
+            ...getAuthHeader()
+        },
+        credentials: 'include'
+    });
+    
+    if (response.status === 404) {
+        throw new Error("Booking not found");
+    }
+    if (!response.ok) {
+        throw new Error("Failed to return car");
+    }
+    
+    // Uppdatera bilen med befintlig data + booked: false
+    await updateCar(carId, {
+        name: car.name,
+        model: car.model,
+        type: car.type,
+        price: car.price,
+        feature1: car.feature1 || '',
+        feature2: car.feature2 || '',
+        feature3: car.feature3 || '',
+        booked: false
+    });
+    
+    return response.json();
+}
 
 // ADMIN GET /api/v1/bookings/return/{bookingId}
 async function returnCar(bookingId) {
@@ -243,6 +289,7 @@ async function returnCar(bookingId) {
         },
         credentials: 'include'
     });
+    
     if (response.status === 404) {
         throw new Error("Booking not found");
     }
@@ -250,10 +297,21 @@ async function returnCar(bookingId) {
         throw new Error("Failed to return car");
     }
     
-    await updateCar(carId, { booked: false });
+    // ⭐ UPPDATERA BILEN - ANVÄND RÄTT DATA ⭐
+    await updateCar(carId, { 
+        booked: false,
+        name: "Corvette",      // Måste skicka med alla fält!
+        model: "Z06",
+        type: "Sport",
+        price: 1500,
+        feature1: "AC",
+        feature2: "Heated side mirrors",
+        feature3: ""
+    });
     
     return response.json();
 }
+
 // ADMIN DELETE /api/v1/cars/{carId}
 async function deleteCar(carId) {
     const response = await fetch(`${API_BASE}/api/v1/cars/${carId}`, {

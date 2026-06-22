@@ -76,6 +76,12 @@ async function renderAdminCars() {
     
     try {
         const cars = await fetchCars();
+        // Uppdatera carMap globalt
+        if (typeof carMap !== 'undefined') {
+            carMap = {};
+            cars.forEach(c => carMap[c.id] = c);
+        }
+        
         const sortedCars = sortAdminCars(cars, adminCarsSortBy, adminCarsSortOrder);
         
         let html = `
@@ -247,13 +253,13 @@ async function renderAdminCars() {
         document.getElementById('add-car-form-element').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const name = document.getElementById('add-car-name').value;
-            const model = document.getElementById('add-car-model').value;
-            const type = document.getElementById('add-car-type').value;
+            const name = document.getElementById('add-car-name').value.trim();
+            const model = document.getElementById('add-car-model').value.trim();
+            const type = document.getElementById('add-car-type').value.trim();
             const price = parseFloat(document.getElementById('add-car-price').value);
-            const feature1 = document.getElementById('add-car-feature1').value;
-            const feature2 = document.getElementById('add-car-feature2').value;
-            const feature3 = document.getElementById('add-car-feature3').value;
+            const feature1 = document.getElementById('add-car-feature1').value.trim();
+            const feature2 = document.getElementById('add-car-feature2').value.trim();
+            const feature3 = document.getElementById('add-car-feature3').value.trim();
             const msgDiv = document.getElementById('add-car-message');
             
             if (!name || !model || !type || !price) {
@@ -293,9 +299,9 @@ async function renderAdminCars() {
                     type: e.target.dataset.type,
                     price: e.target.dataset.price,
                     booked: e.target.dataset.booked === 'true',
-                    feature1: e.target.dataset.feature1,
-                    feature2: e.target.dataset.feature2,
-                    feature3: e.target.dataset.feature3
+                    feature1: e.target.dataset.feature1 || '',
+                    feature2: e.target.dataset.feature2 || '',
+                    feature3: e.target.dataset.feature3 || ''
                 };
                 showEditCarForm(carData);
             });
@@ -320,6 +326,8 @@ async function renderAdminCars() {
 }
 
 function showEditCarForm(carData) {
+      console.log('showEditCarForm anropad med:', carData);
+    console.log('updateCar finns?', typeof updateCar);
     const container = document.getElementById('admin-cars-container');
     if (!container) {
         return;
@@ -342,13 +350,13 @@ function showEditCarForm(carData) {
             <input type="number" id="edit-car-price" class="input-field" value="${carData.price}" required>
             
             <label>Feature 1</label>
-            <input type="text" id="edit-car-feature1" class="input-field" value="${carData.feature1}">
+            <input type="text" id="edit-car-feature1" class="input-field" value="${carData.feature1 || ''}">
             
             <label>Feature 2</label>
-            <input type="text" id="edit-car-feature2" class="input-field" value="${carData.feature2}">
+            <input type="text" id="edit-car-feature2" class="input-field" value="${carData.feature2 || ''}">
             
             <label>Feature 3</label>
-            <input type="text" id="edit-car-feature3" class="input-field" value="${carData.feature3}">
+            <input type="text" id="edit-car-feature3" class="input-field" value="${carData.feature3 || ''}">
             
             <div class="btn-row">
                 <button type="submit" class="btn-positive">Save</button>
@@ -363,13 +371,13 @@ function showEditCarForm(carData) {
     document.getElementById('edit-car-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        const name = document.getElementById('edit-car-name').value;
-        const model = document.getElementById('edit-car-model').value;
-        const type = document.getElementById('edit-car-type').value;
+        const name = document.getElementById('edit-car-name').value.trim();
+        const model = document.getElementById('edit-car-model').value.trim();
+        const type = document.getElementById('edit-car-type').value.trim();
         const price = parseFloat(document.getElementById('edit-car-price').value);
-        const feature1 = document.getElementById('edit-car-feature1').value;
-        const feature2 = document.getElementById('edit-car-feature2').value;
-        const feature3 = document.getElementById('edit-car-feature3').value;
+        const feature1 = document.getElementById('edit-car-feature1').value.trim();
+        const feature2 = document.getElementById('edit-car-feature2').value.trim();
+        const feature3 = document.getElementById('edit-car-feature3').value.trim();
         const msgDiv = document.getElementById('edit-car-message');
         
         if (!name || !model || !type || !price) {
@@ -381,15 +389,16 @@ function showEditCarForm(carData) {
         
         try {
             await updateCar(carData.id, {
-                name,
-                model,
-                type,
-                price,
-                feature1,
-                feature2,
-                feature3,
-                booked: carData.booked
+                name: name,
+                model: model,
+                type: type,
+                price: price,
+                feature1: feature1,
+                feature2: feature2,
+                feature3: feature3,
+                booked: carData.booked || false
             });
+            
             msgDiv.innerHTML = '<div class="message message-success">Car updated successfully!</div>';
             setTimeout(() => {
                 renderAdminCars();
