@@ -52,7 +52,9 @@ function updateNavigation() {
         meLink.style.display = "block";
         carsLink.style.display = "block";
         adminMenu.style.display = isAdmin() ? "block" : "none";
-    } else {
+    } 
+    
+    else {
         loginLink.textContent = "Login";
         loginLink.href = "#login";
         meLink.style.display = "none";
@@ -63,7 +65,7 @@ function updateNavigation() {
 
 async function router() {
     const hash = window.location.hash || "#login";
-    const app = document.getElementById("app");
+    const app  = document.getElementById("app");
     
     if (hash === '#logout') {
         app.innerHTML = routes["#logout"];
@@ -75,6 +77,7 @@ async function router() {
                 app.onclick = null;
                 window.location.hash = "#login";
             }
+
             if (event.target.id === "cancelLogout") {
                 app.onclick = null;
                 window.location.hash = "#cars";
@@ -89,7 +92,6 @@ async function router() {
         return;
     }
 
-    // ADMIN CHECK – ALLTID FÖRST
     if (hash.startsWith("#admin")) {
         if (!isAdmin()) {
             window.location.hash = "#cars";
@@ -129,16 +131,15 @@ async function router() {
         const params = new URLSearchParams(hash.split('?')[1]);
         const carId = params.get('carId');
         
-        if (carId) {
+        if (carId) 
             await renderBooking(carId);
-        } else {
+        
+        else 
             app.innerHTML = '<p class="message message-warning">No car specified</p>';
-        }
         
         return;
     }
 
-    // Admin routes
     if (hash === '#admin/cars') {
         app.innerHTML = routes['#admin/cars'];
         renderAdminCars();
@@ -161,9 +162,10 @@ async function router() {
         app.innerHTML = routes['#login'];
         
         const form = app.querySelector(".login-form");
-        if (form) {
+
+        if (form) 
             form.addEventListener("submit", handleLogin);
-        }
+        
         
         const registerBtn = document.getElementById('go-to-register');
         if (registerBtn) {
@@ -175,17 +177,21 @@ async function router() {
     }
     
     const html = routes[hash];
-    if (html) {
+
+    if (html) 
         app.innerHTML = html;
-    } else {
+    
+    
+    else 
         window.location.hash = "#login";
-    }
+    
 }
 
 window.addEventListener("load", () => {
     router();
     updateNavigation();
 });
+
 window.addEventListener("hashchange", () => {
     router();
     updateNavigation();

@@ -27,7 +27,9 @@ async function handleLogin(event) {
         messageDiv.innerHTML = '<div class="message message-success">You are logged in!</div>';
         window.location.hash = '#me';
         
-    } catch (error) {
+    } 
+    
+    catch (error) {
         messageDiv.innerHTML = '<div class="message message-warning">Invalid username or password</div>';
     }
 }
@@ -71,22 +73,24 @@ function updateNavigation() {
         if (bookingsLink) {
             bookingsLink.style.display = "block";
         }
-    } else {
+    } 
+    
+    else {
         if (loginLink) {
             loginLink.textContent = "Login";
             loginLink.href = "#login";
         }
-        if (adminMenu) {
+        if (adminMenu) 
             adminMenu.style.display = "none";
-        }
-        if (carsLink) {
+        
+        if (carsLink) 
             carsLink.style.display = "none";
-        }
-        if (meLink) {
+        
+        if (meLink) 
             meLink.style.display = "none";
-        }
-        if (bookingsLink) {
+        
+        if (bookingsLink) 
             bookingsLink.style.display = "none";
-        }
+        
     }
 }

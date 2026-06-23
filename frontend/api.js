@@ -30,9 +30,9 @@ async function login(username, password, auth) {
         credentials: 'include'
     });
 
-    if (!response.ok) {
+    if (!response.ok) 
         throw new Error("Failed to fetch user profile");
-    }
+    
 
     return response.json();
 }
@@ -43,9 +43,10 @@ async function fetchUserWithId(userId) {
         headers: getAuthHeader(),
         credentials: "include"
     });
-    if (!response.ok) {
+
+    if (!response.ok) 
         throw new Error("Failed to fetch user profile");
-    }
+    
     return response.json();
 }
 
@@ -67,7 +68,9 @@ async function updateUser(id, userData) {
         body: JSON.stringify(userData),
         credentials: 'include'
     });
-    if (!response.ok) throw new Error("Failed to update profile");
+    if (!response.ok) 
+        throw new Error("Failed to update profile");
+
     return response.json();
 }
 
@@ -77,9 +80,10 @@ async function fetchAllUsers() {
         headers: getAuthHeader(),
         credentials: "include"
     });
-    if (!response.ok) {
+
+    if (!response.ok) 
         throw new Error("Failed to fetch users");
-    }
+    
     return response.json();
 }
 
@@ -92,9 +96,10 @@ async function deleteUser(userId) {
         },
         credentials: 'include'
     });
-    if (!response.ok) {
+
+    if (!response.ok) 
         throw new Error("Failed to delete user");
-    }
+    
     return true;
 }
 
@@ -105,9 +110,9 @@ async function fetchCars() {
         credentials: "include"
     });
     
-    if (!response.ok) {
+    if (!response.ok) 
         throw new Error("Failed to fetch cars");
-    }
+    
     
     return response.json();
 }
@@ -119,9 +124,9 @@ async function fetchCarWithId(carId) {
         credentials: "include"
     });
     
-    if (!response.ok) {
+    if (!response.ok) 
         throw new Error("Failed to fetch cars");
-    }
+    
 
     return response.json();
 }
@@ -160,7 +165,10 @@ async function fetchActiveBookings() {
         headers: getAuthHeader(),
         credentials: "include"
     });
-    if (!response.ok) throw new Error("Failed to fetch active bookings");
+    
+    if (!response.ok) 
+        throw new Error("Failed to fetch active bookings");
+    
     return response.json();
 }
 
@@ -170,7 +178,9 @@ async function fetchBookingsForUser(userId) {
         headers: getAuthHeader(),
         credentials: "include"
     });
-    if (!response.ok) throw new Error("Failed to fetch bookings for user");
+    if (!response.ok) 
+        throw new Error("Failed to fetch bookings for user");
+    
     return response.json();
 }
 
@@ -192,14 +202,15 @@ async function addCar(carData) {
         body: formData,
         credentials: 'include'
     });
+    
     if (!response.ok) {
         const error = await response.json();
         throw new Error(error.error || 'Failed to add car');
     }
+    
     return response.json();
 }
 
-// ADMIN PUT /api/v1/cars/{carId}
 // ADMIN PUT /api/v1/cars/{carId}
 async function updateCar(carId, carData) {
     console.log('updateCar anropad med:', { carId, carData });
@@ -231,7 +242,6 @@ async function updateCar(carId, carData) {
     
     const updatedCar = await response.json();
     
-    // Uppdatera carMap globalt
     if (typeof carMap !== 'undefined') {
         carMap[carId] = updatedCar;
     }
@@ -244,7 +254,6 @@ async function returnCar(bookingId) {
     const booking = await fetchBookingWithId(bookingId);
     const carId = booking.carId;
     
-    // Hämta bilens data först
     const car = await fetchCarWithId(carId);
     
     const response = await fetch(`${API_BASE}/api/v1/bookings/return/${bookingId}`, {
@@ -262,7 +271,6 @@ async function returnCar(bookingId) {
         throw new Error("Failed to return car");
     }
     
-    // Uppdatera bilen med befintlig data + booked: false
     await updateCar(carId, {
         name: car.name,
         model: car.model,
@@ -272,41 +280,6 @@ async function returnCar(bookingId) {
         feature2: car.feature2 || '',
         feature3: car.feature3 || '',
         booked: false
-    });
-    
-    return response.json();
-}
-
-// ADMIN GET /api/v1/bookings/return/{bookingId}
-async function returnCar(bookingId) {
-    const booking = await fetchBookingWithId(bookingId);
-    const carId = booking.carId;
-    
-    const response = await fetch(`${API_BASE}/api/v1/bookings/return/${bookingId}`, {
-        method: 'PUT',
-        headers: {
-            ...getAuthHeader()
-        },
-        credentials: 'include'
-    });
-    
-    if (response.status === 404) {
-        throw new Error("Booking not found");
-    }
-    if (!response.ok) {
-        throw new Error("Failed to return car");
-    }
-    
-    // ⭐ UPPDATERA BILEN - ANVÄND RÄTT DATA ⭐
-    await updateCar(carId, { 
-        booked: false,
-        name: "Corvette",      // Måste skicka med alla fält!
-        model: "Z06",
-        type: "Sport",
-        price: 1500,
-        feature1: "AC",
-        feature2: "Heated side mirrors",
-        feature3: ""
     });
     
     return response.json();
@@ -388,14 +361,37 @@ async function updateBooking(bookingId, bookingData) {
         }),
         credentials: 'include'
     });
+
     if (!response.ok) {
         const error = await response.json();
         throw new Error(error.error || 'Failed to update booking');
     }
     
     if (oldCarId !== newCarId) {
-        await updateCar(oldCarId, { booked: false });
-        await updateCar(newCarId, { booked: true });
+        const oldCar = await fetchCarWithId(oldCarId);
+        const newCar = await fetchCarWithId(newCarId);
+        
+        await updateCar(oldCarId, {
+            name: oldCar.name,
+            model: oldCar.model,
+            type: oldCar.type,
+            price: oldCar.price,
+            feature1: oldCar.feature1 || '',
+            feature2: oldCar.feature2 || '',
+            feature3: oldCar.feature3 || '',
+            booked: false
+        });
+        
+        await updateCar(newCarId, {
+            name: newCar.name,
+            model: newCar.model,
+            type: newCar.type,
+            price: newCar.price,
+            feature1: newCar.feature1 || '',
+            feature2: newCar.feature2 || '',
+            feature3: newCar.feature3 || '',
+            booked: true
+        });
     }
     
     return response.json();
@@ -410,12 +406,22 @@ async function deleteBooking(bookingId, carId) {
         },
         credentials: 'include'
     });
-    if (!response.ok) {
+
+    if (!response.ok) 
         throw new Error("Failed to delete booking");
-    }
     
     if (carId) {
-        await updateCar(carId, { booked: false });
+        const car = await fetchCarWithId(carId);
+        await updateCar(carId, {
+            name: car.name,
+            model: car.model,
+            type: car.type,
+            price: car.price,
+            feature1: car.feature1 || '',
+            feature2: car.feature2 || '',
+            feature3: car.feature3 || '',
+            booked: false
+        });
     }
     
     return true;

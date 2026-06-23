@@ -1,5 +1,3 @@
-// cars.js
-
 let tableView = false;
 
 function sortCars(cars, sortBy, sortOrder) {
@@ -14,7 +12,9 @@ function sortCars(cars, sortBy, sortOrder) {
         if (sortBy === 'name') {
             valA = (a.name + a.model).toLowerCase();
             valB = (b.name + b.model).toLowerCase();
-        } else {
+        } 
+        
+        else {
             valA = a.type.toLowerCase();
             valB = b.type.toLowerCase();
         }
@@ -23,7 +23,9 @@ function sortCars(cars, sortBy, sortOrder) {
             if (valA < valB) return -1;
             if (valA > valB) return 1;
             return 0;
-        } else {
+        } 
+        
+        else {
             if (valA < valB) return 1;
             if (valA > valB) return -1;
             return 0;
@@ -36,7 +38,9 @@ function sortCars(cars, sortBy, sortOrder) {
 async function renderCars(sortBy, sortOrder) {
     if (tableView) {
         await renderCarsTableView(sortBy, sortOrder);
-    } else {
+    } 
+    
+    else {
         await renderCarsCardView(sortBy, sortOrder);
     }
 }

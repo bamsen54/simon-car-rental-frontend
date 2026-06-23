@@ -1,8 +1,9 @@
 async function renderRegister() {
     const container = document.getElementById('register-container');
-    if (!container) {
+    
+    if (!container) 
         return;
-    }
+    
     
     const formHtml = `
         <form class="demo-form" id="register-form">
@@ -82,7 +83,9 @@ async function renderRegister() {
             setTimeout(() => {
                 window.location.hash = '#login';
             }, 1500);
-        } catch (error) {
+        } 
+        
+        catch (error) {
             msgDiv.innerHTML = `<div class="message message-warning">${error.message}</div>`;
         }
     });

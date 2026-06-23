@@ -1,4 +1,3 @@
-// admin-users.js
 let adminUsersTableView = false;
 
 async function renderAdminUsers() {
@@ -63,7 +62,9 @@ async function renderAdminUsers() {
                     </tbody>
                 </table>
             `;
-        } else {
+        } 
+        
+        else {
             html += `<div id="admin-users-list">`;
             for (const user of users) {
                 const isAdmin = user.role === 'ROLE_ADMIN';
@@ -122,20 +123,26 @@ async function renderAdminUsers() {
                     msgDiv.className = 'message message-success';
                     msgDiv.textContent = 'User deleted successfully!';
                     setTimeout(() => renderAdminUsers(), 1500);
-                } catch (error) {
+                } 
+                
+                catch (error) {
                     msgDiv.className = 'message message-warning';
                     msgDiv.textContent = error.message;
                 }
             });
         });
-    } catch (error) {
+    } 
+    
+    catch (error) {
         container.innerHTML = `<div class="panel-neutral" style="max-width: 600px; margin: 2rem auto; text-align: center; color: var(--highlight);">${error.message}</div>`;
     }
 }
 
 function showEditUserForm(userData) {
     const container = document.getElementById('admin-users-container');
-    if (!container) return;
+    
+    if (!container) 
+        return;
 
     const formHtml = `
         <form class="demo-form" id="edit-user-form">
@@ -205,9 +212,10 @@ function showEditUserForm(userData) {
             phone: phone,
             role: role === 'admin' ? 'ROLE_ADMIN' : 'ROLE_USER'
         };
-        if (password) {
+
+        if (password) 
             updateData.password = password;
-        }
+        
 
         try {
             await updateUser(userData.id, updateData);
@@ -222,7 +230,9 @@ function showEditUserForm(userData) {
             }
 
             setTimeout(() => renderAdminUsers(), 1000);
-        } catch (error) {
+        } 
+        
+        catch (error) {
             msgDiv.innerHTML = `<div class="message message-warning">${error.message}</div>`;
         }
     });

@@ -1,9 +1,9 @@
 async function renderMe() {
     const container = document.getElementById('me-container');
-    if (!container) {
-        return;
-    }
 
+    if (!container) 
+        return;
+    
     try {
         const user = await fetchMe();
         const bookings = await fetchMyBookings();
@@ -44,9 +44,10 @@ async function renderMe() {
             <div id="active-bookings">
         `;
 
-        if (activeBookings.length === 0) {
+        if (activeBookings.length === 0) 
             html += '<p>No active bookings.</p>';
-        } else {
+        
+        else {
             for (const booking of activeBookings) {
                 const car = await fetchCarWithId(booking.carId);
                 const imagePath = getCarImagePath(car);
@@ -70,9 +71,10 @@ async function renderMe() {
             <div id="historical-bookings">
         `;
 
-        if (historicalBookings.length === 0) {
+        if (historicalBookings.length === 0) 
             html += '<p>No historical bookings.</p>';
-        } else {
+        
+        else {
             for (const booking of historicalBookings) {
                 const car = await fetchCarWithId(booking.carId);
                 const imagePath = getCarImagePath(car);
@@ -119,9 +121,9 @@ async function renderMe() {
                 phone: phone
             };
 
-            if (newPassword) {
+            if (newPassword) 
                 updateData.password = newPassword;
-            }
+            
 
             try {
                 await updateUser(user.id, updateData);
@@ -142,15 +144,19 @@ async function renderMe() {
                 msgDiv.innerHTML = '<div class="message message-success">Profile updated successfully!</div>';
                 
                 updateNavigation();
-                renderMe();
 
-            } catch (error) {
+                setTimeout(() => {
+                    renderMe();
+                }, 1000);
+            } 
+            
+            catch (error) {
                 msgDiv.innerHTML = `<div class="message message-warning">${error.message}</div>`;
             }
         });
+    } 
 
-    } catch (error) {
-        console.log(error.message);
+    catch (error) {
         container.innerHTML = `
             <div class="panel-neutral" style="max-width: 600px; margin: 2rem auto; text-align: center; color: var(--highlight);">
                 Failed to load profile: ${error.message}

@@ -1,13 +1,12 @@
-// admin-cars.js
 
 let adminCarsTableView = false;
 let adminCarsSortBy = '';
 let adminCarsSortOrder = '';
 
 function sortAdminCars(cars, sortBy, sortOrder) {
-    if (sortBy === '' || sortOrder === '') {
+    if (sortBy === '' || sortOrder === '') 
         return [...cars];
-    }
+    
     
     const sorted = [...cars];
     sorted.sort((a, b) => {
@@ -17,51 +16,58 @@ function sortAdminCars(cars, sortBy, sortOrder) {
             valA = a.id;
             valB = b.id;
         }
+        
         else if (sortBy === 'name') {
             valA = a.name.toLowerCase();
             valB = b.name.toLowerCase();
         }
+        
         else if (sortBy === 'model') {
             valA = a.model.toLowerCase();
             valB = b.model.toLowerCase();
         }
+        
         else if (sortBy === 'type') {
             valA = a.type.toLowerCase();
             valB = b.type.toLowerCase();
         }
+        
         else if (sortBy === 'price') {
             valA = a.price;
             valB = b.price;
         }
+        
         else if (sortBy === 'booked') {
             valA = a.booked;
             valB = b.booked;
         }
+        
         else if (sortBy === 'features') {
             valA = (a.feature1 || '') + (a.feature2 || '') + (a.feature3 || '');
             valB = (b.feature1 || '') + (b.feature2 || '') + (b.feature3 || '');
             valA = valA.toLowerCase();
             valB = valB.toLowerCase();
         }
-        else {
+        
+        else 
             return 0;
-        }
+        
         
         if (typeof valA === 'string') {
-            if (sortOrder === 'asc') {
+            if (sortOrder === 'asc') 
                 return valA.localeCompare(valB);
-            }
-            else {
+            
+            else 
                 return valB.localeCompare(valA);
-            }
+            
         }
+
         else {
-            if (sortOrder === 'asc') {
+            if (sortOrder === 'asc') 
                 return valA - valB;
-            }
-            else {
+            
+            else 
                 return valB - valA;
-            }
         }
     });
     
@@ -70,13 +76,12 @@ function sortAdminCars(cars, sortBy, sortOrder) {
 
 async function renderAdminCars() {
     const container = document.getElementById('admin-cars-container');
-    if (!container) {
+    
+    if (!container) 
         return;
-    }
     
     try {
         const cars = await fetchCars();
-        // Uppdatera carMap globalt
         if (typeof carMap !== 'undefined') {
             carMap = {};
             cars.forEach(c => carMap[c.id] = c);
@@ -285,6 +290,7 @@ async function renderAdminCars() {
                     renderAdminCars();
                 }, 1000);
             }
+            
             catch (error) {
                 msgDiv.innerHTML = `<div class="message message-warning">${error.message}</div>`;
             }
@@ -314,6 +320,7 @@ async function renderAdminCars() {
                     await deleteCar(carId);
                     renderAdminCars();
                 }
+
                 catch (error) {
                     console.error(error.message);
                 }
@@ -326,12 +333,11 @@ async function renderAdminCars() {
 }
 
 function showEditCarForm(carData) {
-      console.log('showEditCarForm anropad med:', carData);
-    console.log('updateCar finns?', typeof updateCar);
+
     const container = document.getElementById('admin-cars-container');
-    if (!container) {
+
+    if (!container) 
         return;
-    }
     
     const formHtml = `
         <form class="demo-form" id="edit-car-form">
@@ -404,6 +410,7 @@ function showEditCarForm(carData) {
                 renderAdminCars();
             }, 1000);
         }
+        
         catch (error) {
             msgDiv.innerHTML = `<div class="message message-warning">${error.message}</div>`;
         }

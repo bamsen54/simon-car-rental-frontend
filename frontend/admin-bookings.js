@@ -19,7 +19,6 @@ async function renderAdminBookings() {
         const carMap = {};
         cars.forEach(c => carMap[c.id] = c);
         
-        // Bygg ALLTID knapparna först
         let html = `
             <div style="text-align: center; margin-bottom: 2rem;">
                 <h2 style="color: var(--highlight);">Admin - All Bookings</h2>
@@ -43,14 +42,12 @@ async function renderAdminBookings() {
             </div>
         `;
         
-        // Kolla om det finns bokningar
         if (bookings.length === 0) {
             html += `
                 <div class="panel-neutral" style="max-width: 600px; margin: 2rem auto; text-align: center; color: var(--text-gray);">No bookings found.</div>
             `;
             container.innerHTML = html;
             
-            // Sätt event listeners
             setupAdminEventListeners(container, userMap, carMap);
             return;
         }
@@ -140,7 +137,6 @@ async function renderAdminBookings() {
         
         container.innerHTML = html;
         
-        // Sätt event listeners
         setupAdminEventListeners(container, userMap, carMap);
         
     } 
@@ -156,7 +152,9 @@ function setupAdminEventListeners(container, userMap, carMap) {
         try {
             const activeBookings = await fetchActiveBookings();
             renderBookingList(activeBookings, userMap, carMap);
-        } catch (error) {
+        } 
+        
+        catch (error) {
             container.innerHTML = `<div class="panel-neutral" style="max-width: 600px; margin: 2rem auto; text-align: center; color: var(--highlight);">${error.message}</div>`;
         }
     });
@@ -274,6 +272,7 @@ function renderBookingList(bookings, userMap, carMap) {
         document.getElementById('back-to-all-bookings')?.addEventListener('click', () => {
             renderAdminBookings();
         });
+
         return;
     }
     
@@ -309,7 +308,6 @@ function renderBookingList(bookings, userMap, carMap) {
     html += `</div>`;
     container.innerHTML = html;
     
-    // Event listeners
     document.getElementById('back-to-all-bookings')?.addEventListener('click', () => {
         renderAdminBookings();
     });
@@ -329,7 +327,9 @@ function renderBookingList(bookings, userMap, carMap) {
                 setTimeout(() => {
                     renderAdminBookings();
                 }, 1500);
-            } catch (error) {
+            } 
+            
+            catch (error) {
                 msgDiv.className = 'message message-warning';
                 msgDiv.textContent = error.message;
             }
@@ -352,7 +352,9 @@ function renderBookingList(bookings, userMap, carMap) {
                 setTimeout(() => {
                     renderAdminBookings();
                 }, 1500);
-            } catch (error) {
+            }
+            
+            catch (error) {
                 msgDiv.className = 'message message-warning';
                 msgDiv.textContent = error.message;
             }
@@ -386,7 +388,7 @@ function showEditBookingForm(bookingId, currentFrom, currentTo, currentCarId) {
                 </select>
                 
                 <label>From Date</label>
-                <input type="date" id="edit-from-date" class="input-field" value="${currentFrom}" min="${today}" required>
+                <input type="date" id="edit-from-date" class="input-field" value="${currentFrom}" min="${today}" readonly required>
                 
                 <label>To Date</label>
                 <input type="date" id="edit-to-date" class="input-field" value="${currentTo}" min="${today}" required>
@@ -442,4 +444,3 @@ function showEditBookingForm(bookingId, currentFrom, currentTo, currentCarId) {
         container.innerHTML = `<div class="panel-neutral" style="max-width: 600px; margin: 2rem auto; text-align: center; color: var(--highlight);">Failed to load cars: ${error.message}</div>`;
     });
 }
-
